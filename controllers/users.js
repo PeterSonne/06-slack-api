@@ -2,6 +2,7 @@
 const Users = require("../models/users");
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // Routes
 router.post("/signup", (req, res) => {
@@ -19,7 +20,7 @@ router.post("/signup", (req, res) => {
           .then(usr => {
             let user = usr.toObject();
             delete user.password;
-            res.send(user);
+            res.send({ token: jwt.sign(user, process.env.TOKEN_SECRET) });
           })
           .catch(err => res.send(err));
       }
