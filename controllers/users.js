@@ -1,6 +1,7 @@
 // Require
 const Users = require("../models/users");
 const router = require("express").Router();
+const bcrypt = require("bcrypt");
 
 // Routes
 router.post("/signup", (req, res) => {
@@ -11,9 +12,15 @@ router.post("/signup", (req, res) => {
       if (usr !== null) {
         res.send("E-Mail already exists!");
       } else {
+        // encrypt password
+        req.body.password = bcrypt.hashSync(req.body.password, 12);
         // create user
         Users.create(req.body)
-          .then(usr => res.send(usr))
+          .then(usr => {
+            let user = usr.toObject();
+            delete user.password;
+            res.send(user);
+          })
           .catch(err => res.send(err));
       }
     })
