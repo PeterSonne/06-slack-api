@@ -1,9 +1,19 @@
 // Require
 const Messages = require("../models/messages");
 const router = require("express").Router();
+const jwt = require("jsonwebtoken");
 
 // Routes
 router.post("/", (req, res) => {
+  // get Token
+  if (req.headers.authorization == null) {
+    res.send("Authorization failed!");
+  }
+  let token = req.headers.authorization.split(" ")[1];
+  let tokenData = jwt.verify(token, process.env.TOKEN_SECRET);
+  console.log(tokenData);
+  req.body.user = tokenData._id;
+  console.log(req.body);
   Messages.create(req.body)
     .then(message => {
       res.send(message);
