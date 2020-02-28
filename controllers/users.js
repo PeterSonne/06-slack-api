@@ -28,19 +28,23 @@ router.post("/signup", (req, res) => {
     .catch(err => console.log(err));
 });
 router.post("/login", (req, res) => {
-  Users.findOne({ email: req.body.email }).then(doc => {
-    console.log("Found: ", doc);
-    if (doc === null) {
-      res.send("E-Mail not found!");
-    } else {
-      console.log("E-Mail found in DB");
-      if (bcrypt.compareSync(req.body.password, doc.password)) {
-        res.send({ token: jwt.sign(doc.toObject(), process.env.TOKEN_SECRET) });
+  Users.findOne({ email: req.body.email })
+    .select("+password")
+    .then(doc => {
+      console.log("Found: ", doc);
+      if (doc === null) {
+        res.send("E-Mail not found!");
       } else {
-        res.send("Invalid password");
+        console.log("E-Mail found in DB");
+        if (bcrypt.compareSync(req.body.password, doc.password)) {
+          res.send({
+            token: jwt.sign(doc.toObject(), process.env.TOKEN_SECRET)
+          });
+        } else {
+          res.send("Invalid password");
+        }
       }
-    }
-  });
+    });
 });
 
 // Export
