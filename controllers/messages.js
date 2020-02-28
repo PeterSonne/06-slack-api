@@ -2,6 +2,7 @@
 const Messages = require("../models/messages");
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
+const auth = require("../services/auth.js");
 
 // Routes
 router.post("/", (req, res) => {
