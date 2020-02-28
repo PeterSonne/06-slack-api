@@ -18,9 +18,9 @@ router.post("/signup", (req, res) => {
         // create user
         Users.create(req.body)
           .then(usr => {
-            let user = usr.toObject();
-            delete user.password;
-            res.send({ token: jwt.sign(user, process.env.TOKEN_SECRET) });
+            res.send({
+              token: jwt.sign(usr.toObject(), process.env.TOKEN_SECRET)
+            });
           })
           .catch(err => res.send(err));
       }
