@@ -11,7 +11,7 @@ router.post("/signup", (req, res) => {
   Users.findOne({ email: req.body.email })
     .then(usr => {
       if (usr !== null) {
-        res.send("E-Mail already exists!");
+        res.send({ message: "E-Mail adress already in use!" });
       } else {
         // encrypt password
         req.body.password = bcrypt.hashSync(req.body.password, 12);
@@ -33,15 +33,15 @@ router.post("/login", (req, res) => {
     .then(doc => {
       console.log("Found: ", doc);
       if (doc === null) {
-        res.send("E-Mail not found!");
+        res.send({ message: "E-Mail found in DB" });
       } else {
-        console.log("E-Mail found in DB");
+        console.log({ message: "E-Mail found in DB" });
         if (bcrypt.compareSync(req.body.password, doc.password)) {
           res.send({
             token: jwt.sign(doc.toObject(), process.env.TOKEN_SECRET)
           });
         } else {
-          res.send("Invalid password");
+          res.send({ message: "Invalid password" });
         }
       }
     });
